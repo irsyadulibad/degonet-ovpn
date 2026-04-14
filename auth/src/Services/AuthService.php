@@ -36,6 +36,13 @@ class AuthService
             return null;
         }
 
+        $checkIpStmt = $this->conn->prepare('SELECT id FROM mikrotik_users WHERE ip = ?');
+        $checkIpStmt->execute([$ip]);
+
+        if ($checkIpStmt->fetch()) {
+            return null;
+        }
+
         $insertStmt = $this->conn->prepare(
             'INSERT INTO mikrotik_users (username, password, ip, netmask) VALUES (?, ?, ?, ?)'
         );
@@ -52,5 +59,40 @@ class AuthService
 
         $user = $stmt->fetch(PDO::FETCH_OBJ);
         return $user ?: null;
+    }
+
+    public function findUserByUsername(string $username): object|null
+    {
+        $stmt = $this->conn->prepare('SELECT * FROM mikrotik_users WHERE username = ?');
+        $stmt->execute([$username]);
+
+        $user = $stmt->fetch(PDO::FETCH_OBJ);
+        return $user ?: null;
+    }
+
+    public function findUserByIp(string $ip): object|null
+    {
+        $stmt = $this->conn->prepare('SELECT * FROM mikrotik_users WHERE ip = ?');
+        $stmt->execute([$ip]);
+
+        $user = $stmt->fetch(PDO::FETCH_OBJ);
+        return $user ?: null;
+    }
+
+    /**
+     * @return array<int, object>
+     */
+    public function listUsers(): array
+    {
+        $stmt = $this->conn->query('SELECT username, ip, netmask FROM mikrotik_users ORDER BY username ASC');
+        return $stmt->fetchAll(PDO::FETCH_OBJ) ?: [];
+    }
+
+    public function deleteUser(string $username): bool
+    {
+        $stmt = $this->conn->prepare('DELETE FROM mikrotik_users WHERE username = ?');
+        $stmt->execute([$username]);
+
+        return $stmt->rowCount() > 0;
     }
 }

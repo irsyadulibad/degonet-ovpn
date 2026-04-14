@@ -24,12 +24,28 @@ composer run build
 cd ..
 ```
 
-- Add user via CLI
+- Manage users via CLI (run from the project root after build)
 
 ```bash
-cd auth
 ./auth.phar add <username> <ip> [password] [netmask]
+./auth.phar list
+./auth.phar delete <username>
 ```
+
+Example:
+
+```bash
+./auth.phar add budi 10.8.0.10 rahasia 255.255.255.0
+./auth.phar list
+./auth.phar delete budi
+```
+
+Notes for the `add` command:
+
+- Username must be unique in the database.
+- IP address must be unique in the database.
+- If password is not provided, it defaults to the username.
+- Successful output is shown in table format and the password value is masked as `****`.
 
 - Run OpenVPN Server
 
