@@ -24,6 +24,13 @@ composer run build
 cd ..
 ```
 
+- Add user via CLI
+
+```bash
+cd auth
+./auth.phar add <username> <ip> [password] [netmask]
+```
+
 - Run OpenVPN Server
 
 ```bash

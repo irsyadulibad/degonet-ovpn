@@ -26,4 +26,31 @@ class AuthService
 
         return $user;
     }
+
+    public function addUser(string $username, string $password, string $ip, string $netmask): object|null
+    {
+        $checkStmt = $this->conn->prepare('SELECT id FROM mikrotik_users WHERE username = ?');
+        $checkStmt->execute([$username]);
+
+        if ($checkStmt->fetch()) {
+            return null;
+        }
+
+        $insertStmt = $this->conn->prepare(
+            'INSERT INTO mikrotik_users (username, password, ip, netmask) VALUES (?, ?, ?, ?)'
+        );
+
+        $insertStmt->execute([
+            $username,
+            password_hash($password, PASSWORD_DEFAULT),
+            $ip,
+            $netmask,
+        ]);
+
+        $stmt = $this->conn->prepare('SELECT * FROM mikrotik_users WHERE id = ?');
+        $stmt->execute([(int)$this->conn->lastInsertId()]);
+
+        $user = $stmt->fetch(PDO::FETCH_OBJ);
+        return $user ?: null;
+    }
 }
