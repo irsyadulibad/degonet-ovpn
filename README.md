@@ -21,7 +21,7 @@ cd auth
 cp .env.example .env
 composer install --no-dev
 composer run build
-cd .. && chmod +x auth.phar
+cd ..
 ```
 
 - Run OpenVPN Server
