@@ -4,3 +4,4 @@ auth/vendor
 *.log
 ccds/*
 users.sqlite
+*.service
